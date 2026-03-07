@@ -26,8 +26,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker-compose down || true
-                        docker-compose up -d
+                        docker compose down || true
+                        docker compose up -d
                         sleep 10
                     '''
                 }
@@ -55,7 +55,7 @@ pipeline {
                         docker login -u $DOCKER_ID -p $DOCKER_PASS
                         docker push $DOCKER_ID/$DOCKER_IMAGE:$MOVIE_TAG
                         docker push $DOCKER_ID/$DOCKER_IMAGE:$CAST_TAG
-                        docker-compose down
+                        docker compose down
                     '''
                 }
             }
