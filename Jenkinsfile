@@ -72,14 +72,39 @@ pipeline {
                         mkdir .kube
                         cat "$KUBECONFIG" > .kube/config
 
-                        cp charts/values.yaml values.yml
-                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
+                        helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
 
-                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace dev --create-namespace --set service.nodePort=30007
+                        helm upgrade --install movie-db bitnami/postgresql --namespace dev --create-namespace \
+                            --set auth.username=movie_db_username \
+                            --set auth.password=movie_db_password \
+                            --set auth.database=movie_db_dev
 
-                        sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace dev --set service.nodePort=30008
+                        helm upgrade --install cast-db bitnami/postgresql --namespace dev \
+                            --set auth.username=cast_db_username \
+                            --set auth.password=cast_db_password \
+                            --set auth.database=cast_db_dev
+
+                        cp charts/values.yaml values-movie.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-movie.yml
+                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values-movie.yml
+                        cat >> values-movie.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://movie_db_username:movie_db_password@movie-db-postgresql:5432/movie_db_dev"
+  - name: CAST_SERVICE_HOST_URL
+    value: "http://cast-service-fastapiapp.dev.svc.cluster.local:8000/api/v1/casts/"
+EOF
+                        helm upgrade --install movie-service charts --values=values-movie.yml --namespace dev --set service.nodePort=30007
+
+                        cp charts/values.yaml values-cast.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-cast.yml
+                        sed -i "s+tag.*+tag: $CAST_TAG+g" values-cast.yml
+                        cat >> values-cast.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://cast_db_username:cast_db_password@cast-db-postgresql:5432/cast_db_dev"
+EOF
+                        helm upgrade --install cast-service charts --values=values-cast.yml --namespace dev --set service.nodePort=30008
                     '''
                 }
             }
@@ -96,14 +121,39 @@ pipeline {
                         mkdir .kube
                         cat "$KUBECONFIG" > .kube/config
 
-                        cp charts/values.yaml values.yml
-                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
+                        helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
 
-                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace sa --create-namespace --set service.nodePort=30009
+                        helm upgrade --install movie-db bitnami/postgresql --namespace sa --create-namespace \
+                            --set auth.username=movie_db_username \
+                            --set auth.password=movie_db_password \
+                            --set auth.database=movie_db_dev
 
-                        sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace sa --set service.nodePort=30010
+                        helm upgrade --install cast-db bitnami/postgresql --namespace sa \
+                            --set auth.username=cast_db_username \
+                            --set auth.password=cast_db_password \
+                            --set auth.database=cast_db_dev
+
+                        cp charts/values.yaml values-movie.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-movie.yml
+                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values-movie.yml
+                        cat >> values-movie.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://movie_db_username:movie_db_password@movie-db-postgresql:5432/movie_db_dev"
+  - name: CAST_SERVICE_HOST_URL
+    value: "http://cast-service-fastapiapp.sa.svc.cluster.local:8000/api/v1/casts/"
+EOF
+                        helm upgrade --install movie-service charts --values=values-movie.yml --namespace sa --set service.nodePort=30009
+
+                        cp charts/values.yaml values-cast.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-cast.yml
+                        sed -i "s+tag.*+tag: $CAST_TAG+g" values-cast.yml
+                        cat >> values-cast.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://cast_db_username:cast_db_password@cast-db-postgresql:5432/cast_db_dev"
+EOF
+                        helm upgrade --install cast-service charts --values=values-cast.yml --namespace sa --set service.nodePort=30010
                     '''
                 }
             }
@@ -120,14 +170,39 @@ pipeline {
                         mkdir .kube
                         cat "$KUBECONFIG" > .kube/config
 
-                        cp charts/values.yaml values.yml
-                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
+                        helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
 
-                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace staging --create-namespace --set service.nodePort=30011
+                        helm upgrade --install movie-db bitnami/postgresql --namespace staging --create-namespace \
+                            --set auth.username=movie_db_username \
+                            --set auth.password=movie_db_password \
+                            --set auth.database=movie_db_dev
 
-                        sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace staging --set service.nodePort=30012
+                        helm upgrade --install cast-db bitnami/postgresql --namespace staging \
+                            --set auth.username=cast_db_username \
+                            --set auth.password=cast_db_password \
+                            --set auth.database=cast_db_dev
+
+                        cp charts/values.yaml values-movie.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-movie.yml
+                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values-movie.yml
+                        cat >> values-movie.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://movie_db_username:movie_db_password@movie-db-postgresql:5432/movie_db_dev"
+  - name: CAST_SERVICE_HOST_URL
+    value: "http://cast-service-fastapiapp.staging.svc.cluster.local:8000/api/v1/casts/"
+EOF
+                        helm upgrade --install movie-service charts --values=values-movie.yml --namespace staging --set service.nodePort=30011
+
+                        cp charts/values.yaml values-cast.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-cast.yml
+                        sed -i "s+tag.*+tag: $CAST_TAG+g" values-cast.yml
+                        cat >> values-cast.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://cast_db_username:cast_db_password@cast-db-postgresql:5432/cast_db_dev"
+EOF
+                        helm upgrade --install cast-service charts --values=values-cast.yml --namespace staging --set service.nodePort=30012
                     '''
                 }
             }
@@ -150,14 +225,39 @@ pipeline {
                         mkdir .kube
                         cat "$KUBECONFIG" > .kube/config
 
-                        cp charts/values.yaml values.yml
-                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
+                        helm repo add bitnami https://charts.bitnami.com/bitnami --force-update
 
-                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace prod --create-namespace --set service.nodePort=30013
+                        helm upgrade --install movie-db bitnami/postgresql --namespace prod --create-namespace \
+                            --set auth.username=movie_db_username \
+                            --set auth.password=movie_db_password \
+                            --set auth.database=movie_db_dev
 
-                        sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace prod --set service.nodePort=30014
+                        helm upgrade --install cast-db bitnami/postgresql --namespace prod \
+                            --set auth.username=cast_db_username \
+                            --set auth.password=cast_db_password \
+                            --set auth.database=cast_db_dev
+
+                        cp charts/values.yaml values-movie.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-movie.yml
+                        sed -i "s+tag.*+tag: $MOVIE_TAG+g" values-movie.yml
+                        cat >> values-movie.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://movie_db_username:movie_db_password@movie-db-postgresql:5432/movie_db_dev"
+  - name: CAST_SERVICE_HOST_URL
+    value: "http://cast-service-fastapiapp.prod.svc.cluster.local:8000/api/v1/casts/"
+EOF
+                        helm upgrade --install movie-service charts --values=values-movie.yml --namespace prod --set service.nodePort=30013
+
+                        cp charts/values.yaml values-cast.yml
+                        sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values-cast.yml
+                        sed -i "s+tag.*+tag: $CAST_TAG+g" values-cast.yml
+                        cat >> values-cast.yml << EOF
+env:
+  - name: DATABASE_URI
+    value: "postgresql://cast_db_username:cast_db_password@cast-db-postgresql:5432/cast_db_dev"
+EOF
+                        helm upgrade --install cast-service charts --values=values-cast.yml --namespace prod --set service.nodePort=30014
                     '''
                 }
             }
