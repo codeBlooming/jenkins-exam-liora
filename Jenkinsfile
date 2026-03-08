@@ -2,7 +2,6 @@ pipeline {
     environment {
         DOCKER_ID    = 'devopsdsgc'
         DOCKER_IMAGE = 'dsjenkinsexam'
-        DOCKER_TAG   = "v.${BUILD_ID}.0"
         MOVIE_TAG    = "movie.v.${BUILD_ID}.0"
         CAST_TAG     = "cast.v.${BUILD_ID}.0"
     }
@@ -38,8 +37,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        curl -f localhost:8080/api/v1/movies/docs
-                        curl -f localhost:8080/api/v1/casts/docs
+                        curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors localhost:8080/api/v1/movies/docs
+                        curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors localhost:8080/api/v1/casts/docs
                     '''
                 }
             }
