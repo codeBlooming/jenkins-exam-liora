@@ -37,6 +37,7 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        cat /etc/hostname && ip route
                         NGINX_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q nginx))
                         curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors http://${NGINX_IP}:8080/api/v1/movies/docs
                         curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors http://${NGINX_IP}:8080/api/v1/casts/docs
