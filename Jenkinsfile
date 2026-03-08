@@ -37,7 +37,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cat /etc/hostname && ip route
                         NGINX_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q nginx))
                         curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors http://${NGINX_IP}:8080/api/v1/movies/docs
                         curl -f --retry 10 --retry-delay 5 --retry-connrefused --retry-all-errors http://${NGINX_IP}:8080/api/v1/casts/docs
@@ -71,7 +70,7 @@ pipeline {
                     sh '''
                         rm -Rf .kube
                         mkdir .kube
-                        cat $KUBECONFIG > .kube/config
+                        cat "$KUBECONFIG" > .kube/config
 
                         cp charts/values.yaml values.yml
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
@@ -95,7 +94,7 @@ pipeline {
                     sh '''
                         rm -Rf .kube
                         mkdir .kube
-                        cat $KUBECONFIG > .kube/config
+                        cat "$KUBECONFIG" > .kube/config
 
                         cp charts/values.yaml values.yml
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
@@ -119,7 +118,7 @@ pipeline {
                     sh '''
                         rm -Rf .kube
                         mkdir .kube
-                        cat $KUBECONFIG > .kube/config
+                        cat "$KUBECONFIG" > .kube/config
 
                         cp charts/values.yaml values.yml
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
@@ -149,7 +148,7 @@ pipeline {
                     sh '''
                         rm -Rf .kube
                         mkdir .kube
-                        cat $KUBECONFIG > .kube/config
+                        cat "$KUBECONFIG" > .kube/config
 
                         cp charts/values.yaml values.yml
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
