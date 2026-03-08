@@ -76,10 +76,10 @@ pipeline {
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
 
                         sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace dev --create-namespace
+                        helm upgrade --install movie-service charts --values=values.yml --namespace dev --create-namespace --set service.nodePort=30007
 
                         sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace dev
+                        helm upgrade --install cast-service charts --values=values.yml --namespace dev --set service.nodePort=30008
                     '''
                 }
             }
@@ -100,10 +100,10 @@ pipeline {
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
 
                         sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace sa --create-namespace
+                        helm upgrade --install movie-service charts --values=values.yml --namespace sa --create-namespace --set service.nodePort=30009
 
                         sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace sa
+                        helm upgrade --install cast-service charts --values=values.yml --namespace sa --set service.nodePort=30010
                     '''
                 }
             }
@@ -124,10 +124,10 @@ pipeline {
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
 
                         sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace staging --create-namespace
+                        helm upgrade --install movie-service charts --values=values.yml --namespace staging --create-namespace --set service.nodePort=30011
 
                         sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace staging
+                        helm upgrade --install cast-service charts --values=values.yml --namespace staging --set service.nodePort=30012
                     '''
                 }
             }
@@ -154,10 +154,10 @@ pipeline {
                         sed -i "s+repository.*+repository: $DOCKER_ID/$DOCKER_IMAGE+g" values.yml
 
                         sed -i "s+tag.*+tag: $MOVIE_TAG+g" values.yml
-                        helm upgrade --install movie-service charts --values=values.yml --namespace prod --create-namespace
+                        helm upgrade --install movie-service charts --values=values.yml --namespace prod --create-namespace --set service.nodePort=30013
 
                         sed -i "s+tag.*+tag: $CAST_TAG+g" values.yml
-                        helm upgrade --install cast-service charts --values=values.yml --namespace prod
+                        helm upgrade --install cast-service charts --values=values.yml --namespace prod --set service.nodePort=30014
                     '''
                 }
             }
